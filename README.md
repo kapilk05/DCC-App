@@ -68,5 +68,4 @@ This will generate executable files in the `dist/` folder.
 you can run python server.exe or python page.exe
 
 
-This project video is at : 
-
+This project video is at : https://youtu.be/zzQwMOrf1JQ
