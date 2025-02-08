@@ -3,6 +3,7 @@ import time
 import functools
 from flask import Flask, request, jsonify
 import os
+
 app = Flask(__name__)
 
 # 10-second delay decorator 
@@ -34,7 +35,7 @@ def init_db():
 
 init_db()  # Call this function when the server starts
 
-# Storing Transformations
+# Storing Transformations (POST)
 @app.route('/store-transformation', methods=['POST'])
 @delayed_response
 def store_transformation():
@@ -52,19 +53,16 @@ def store_transformation():
         conn = sqlite3.connect("inventory.db")
         cursor = conn.cursor()
         cursor.execute("INSERT INTO transformations (object_name, transformation_data) VALUES (?, ?)", 
-                       (object_name, str(transformation_data)))  # Store JSON as string
+                       (object_name, str(transformation_data)))  
         conn.commit()
         conn.close()
 
         return jsonify({"message": "Transformation stored successfully!"}), 201
     except sqlite3.Error as e:
         return jsonify({"error": f"Database error: {str(e)}"}), 500
-    except Exception as e:
-        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
-# Retrieving stored transformations
+# Retrieving stored transformations (GET)
 @app.route('/get-transformations', methods=['GET'])
-@delayed_response
 def get_transformations():
     try:
         conn = sqlite3.connect("inventory.db")
@@ -80,11 +78,9 @@ def get_transformations():
         return jsonify(transformations), 200
     except sqlite3.Error as e:
         return jsonify({"error": f"Database error: {str(e)}"}), 500
-    except Exception as e:
-        return jsonify({"error": f"Unexpected error: {str(e)}"}), 500
 
+# Adding an item to inventory (POST)
 @app.route('/add-item', methods=['POST'])
-@delayed_response
 def add_item():
     data = request.json
     name = data.get("name")
@@ -103,11 +99,10 @@ def add_item():
     finally:
         conn.close()
 
-    return jsonify({"message": f"Added {quantity}x {name}"}), 200
+    return jsonify({"message": f"Added {quantity}x {name}"}), 201
 
-# Delete item from inventory.db
+# Removing an item from inventory (POST)
 @app.route('/remove-item', methods=['POST'])
-@delayed_response
 def remove_item():
     data = request.json
     name = data.get("name")
@@ -123,9 +118,8 @@ def remove_item():
 
     return jsonify({"message": f"Removed {name} from inventory"}), 200
 
-# Update qty
+# Updating item quantity (POST)
 @app.route('/update-quantity', methods=['POST'])
-@delayed_response
 def update_quantity():
     data = request.json
     name = data.get("name")
@@ -142,40 +136,37 @@ def update_quantity():
 
     return jsonify({"message": f"Updated {name} quantity to {quantity}"}), 200
 
-# Home 
+# Home Page (GET)
 @app.route('/')
 def home():
     return "Flask Server is Running!"
 
-# Transform
+# Transform (POST)
 @app.route('/transform', methods=['POST'])
-@delayed_response
 def transform():
     data = request.json
     print("Received Transform Data:", data)
     return jsonify({"message": "Transform received", "data": data}), 200
 
-# Translation 
+# Translation (POST)
 @app.route('/translation', methods=['POST'])
-@delayed_response
 def translation():
     data = request.json
     return jsonify({"message": "Translation received", "data": data}), 200
 
-# Rotation
+# Rotation (POST)
 @app.route('/rotation', methods=['POST'])
-@delayed_response
 def rotation():
     data = request.json
     return jsonify({"message": "Rotation received", "data": data}), 200
 
-# Scaling 
+# Scaling (POST)
 @app.route('/scaling', methods=['POST'])
-@delayed_response
 def scaling():
     data = request.json
     return jsonify({"message": "Scaling received", "data": data}), 200
 
+# Fetch inventory details (GET)
 @app.route('/get-inventory', methods=['GET'])
 def get_inventory():
     conn = sqlite3.connect("inventory.db")
@@ -185,24 +176,28 @@ def get_inventory():
     conn.close()
     return jsonify(items), 200
 
-# File Path Endpoint
+# Get file path (GET)
 @app.route('/file-path', methods=['GET'])
 def file_path():
     project_path = request.args.get('projectpath')
     
     if project_path == "true":
-        return jsonify({"project_path": os.getcwd()}), 200  # Returns the current working directory
+        return jsonify({"project_path": os.getcwd()}), 200  
     else:
-        dcc_file_path = os.path.join(os.getcwd(), "assignment.blend")  # Example DCC file
+        dcc_file_path = os.path.join(os.getcwd(), "assignment.blend")  
         return jsonify({"dcc_file_path": dcc_file_path}), 200
-    
+
+# Clear Inventory (POST)
 @app.route("/clear-inventory", methods=["POST"])
 def clear_inventory():
-    global inventory
-    inventory.clear() 
-    return jsonify({"message": "Inventory cleared!"})
+    conn = sqlite3.connect("inventory.db")
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM inventory")
+    conn.commit()
+    conn.close()
 
-
+    return jsonify({"message": "Inventory cleared!"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
