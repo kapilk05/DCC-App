@@ -30,20 +30,20 @@
    ![Flask Server](images/flask server.png)
 2. The object transformations are defined under assignment.blend
    data object is containing object data that we store the transformation on 
-   these changes are reflected in the flask terminal when run
-   <img src="images/transformations from blender.png" alt="Flask Server Showing Transformations" width="600">
-   and the same can be seen on the running server at http://127.0.0.1:5000/get-transformations
+   these changes are reflected in the flask terminal when run <br>
+   <img src="images/transformations from blender.png" alt="Flask Server Showing Transformations" width="600"> <br> <br> 
+   and the same can be seen on the running server at http://127.0.0.1:5000/get-transformations <br> <br> <br> 
    <img src="images/flask server showing transformations.png" alt="Flask Server Showing Transformations" width="600">
 
 
 
 ### Inventory  (`page.py`)
-- Add an item to inventory
-- Remove an item
-  <img src="images/return button.png" alt="Flask Server Showing Transformations" width="600">
+- Add an item to inventory <br>
+- Remove an item <br>
+  <img src="images/return button.png" alt="Flask Server Showing Transformations" width="600"> <br>
 
 
-- List all items
+- List all items <br>
 
 ![Inventory](images/inventory.png)
 
@@ -51,20 +51,7 @@
 - `POST /add-item`: Add a new item with name and quantity
 - `POST /remove-item`: Remove an item by name
 - `GET /inventory`: Retrieve the entire inventory
-
-### Blender Operations (`script.blend`)
-- 3D visual representation of items (linked with inventory system)
-- Automated modifications using Blender scripts
-
-
-### Common Errors & Fixes
-1. **`pytest` not recognized**
-   - Ensure pytest is installed: `pip install pytest`
-2. **Connection errors**
-   - Make sure `server.py` is running before executing tests.
-3. **Assertion errors (e.g., `400 != 201`)**
-   - Check API request formats and ensure valid JSON data is sent.
-
+  
 ---
 Alternately you can use `pyinstaller` to package the application to run without a python enviornment
 
